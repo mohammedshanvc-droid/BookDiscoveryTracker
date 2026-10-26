@@ -1,0 +1,592 @@
+ {% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile | BookTrack</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --cream: #f8f4e9;
+            --wine: #7e2333;
+            --wine-dark: #5e1725;
+            --ink: #29231f;
+            --muted: #777068;
+            --border: #e3d9c8;
+            --white: #fffdf8;
+            --success-bg: #eaf4e8;
+            --success-text: #315c35;
+            --error-bg: #fae9e6;
+            --error-text: #922e2e;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: var(--cream);
+            color: var(--ink);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        button,
+        input {
+            font-family: inherit;
+        }
+
+        :focus-visible {
+            outline: 2px solid var(--wine);
+            outline-offset: 4px;
+        }
+
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(248, 244, 233, 0.96);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .navbar {
+            width: 100%;
+            max-width: 1320px;
+            min-height: 82px;
+            margin: auto;
+            padding: 15px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 14px;
+            flex-shrink: 0;
+        }
+
+        .brand-mark {
+            width: 53px;
+            height: 53px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            border-radius: 13px;
+            background: var(--wine);
+            color: var(--white);
+            font-family: 'DM Serif Display', Georgia, serif;
+            font-size: 34px;
+            font-weight: 400;
+            line-height: 1;
+        }
+
+        .brand-text {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        .logo {
+            color: var(--ink);
+            font-family: 'DM Serif Display', Georgia, serif;
+            font-size: 34px;
+            font-weight: 400;
+            line-height: 1.05;
+            white-space: nowrap;
+        }
+
+        .logo span {
+            color: var(--wine);
+        }
+
+        .brand-tagline {
+            color: var(--muted);
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            line-height: 1.4;
+            white-space: nowrap;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .nav-btn {
+            min-height: 42px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 19px;
+            border: 1px solid var(--wine);
+            border-radius: 999px;
+            background: var(--wine);
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+            white-space: nowrap;
+            transition: background 0.2s ease, transform 0.2s ease;
+        }
+
+        .nav-btn:hover {
+            background: var(--wine-dark);
+            border-color: var(--wine-dark);
+            transform: translateY(-1px);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            flex: 1;
+            margin: 0 auto;
+            padding: 55px 24px 70px;
+        }
+
+        .page-heading {
+            margin-bottom: 30px;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 16px;
+            padding: 8px 13px;
+            border: 1px solid #e7cbd0;
+            border-radius: 999px;
+            background: #f5e8e8;
+            color: var(--wine);
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 1.7px;
+            text-transform: uppercase;
+        }
+
+        .eyebrow::before {
+            content: "";
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--wine);
+        }
+
+        .page-heading h1 {
+            margin-bottom: 12px;
+            font-family: 'DM Serif Display', Georgia, serif;
+            font-size: clamp(38px, 5vw, 54px);
+            font-weight: 400;
+            line-height: 1.12;
+        }
+
+        .page-heading h1 span {
+            color: var(--wine);
+        }
+
+        .page-heading p {
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.8;
+        }
+
+        .messages {
+            margin-bottom: 22px;
+        }
+
+        .message {
+            margin-bottom: 10px;
+            padding: 14px 17px;
+            border: 1px solid #cfe2cb;
+            border-radius: 12px;
+            background: var(--success-bg);
+            color: var(--success-text);
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .error-message {
+            margin-bottom: 18px;
+            padding: 14px 17px;
+            border: 1px solid #efc8c2;
+            border-radius: 12px;
+            background: var(--error-bg);
+            color: var(--error-text);
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .profile-card {
+            display: grid;
+            grid-template-columns: 285px minmax(0, 1fr);
+            gap: 38px;
+            padding: 36px;
+            border: 1px solid var(--border);
+            border-radius: 22px;
+            background: var(--white);
+            box-shadow: 0 12px 35px rgba(63, 43, 27, 0.055);
+        }
+
+        .profile-left {
+            min-width: 0;
+            padding: 15px 28px 15px 0;
+            border-right: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .avatar {
+            width: 155px;
+            height: 155px;
+            margin: 0 auto 23px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border: 4px solid #ead8d4;
+            border-radius: 50%;
+            background: #f3e6e1;
+            box-shadow: 0 0 0 7px #faf3ee;
+        }
+
+        .avatar img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .avatar-placeholder {
+            color: var(--wine);
+            font-family: 'DM Serif Display', Georgia, serif;
+            font-size: 62px;
+            line-height: 1;
+        }
+
+        .profile-left h2 {
+            margin-bottom: 9px;
+            font-family: 'DM Serif Display', Georgia, serif;
+            font-size: 25px;
+            font-weight: 400;
+            line-height: 1.3;
+            overflow-wrap: anywhere;
+        }
+
+        .profile-email {
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.8;
+            overflow-wrap: anywhere;
+        }
+
+        .profile-label {
+            display: inline-block;
+            margin-top: 18px;
+            padding: 7px 11px;
+            border-radius: 999px;
+            background: #f5e8e8;
+            color: var(--wine);
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .profile-right {
+            min-width: 0;
+            align-self: center;
+        }
+
+        .profile-right h2 {
+            margin-bottom: 10px;
+            font-family: 'DM Serif Display', Georgia, serif;
+            font-size: 31px;
+            font-weight: 400;
+            line-height: 1.25;
+        }
+
+        .section-description {
+            margin-bottom: 25px;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.8;
+        }
+
+        .form-group {
+            margin-bottom: 22px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            color: #39302b;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .form-control {
+            width: 100%;
+            min-height: 49px;
+            padding: 8px;
+            border: 1px solid #ded5c8;
+            border-radius: 11px;
+            background: #fffefa;
+            color: var(--ink);
+            font-family: inherit;
+            font-size: 12px;
+        }
+
+        input[type="file"]::file-selector-button {
+            margin-right: 12px;
+            padding: 11px 17px;
+            border: none;
+            border-radius: 7px;
+            background: var(--wine);
+            color: white;
+            font-family: inherit;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        input[type="file"]::file-selector-button:hover {
+            background: var(--wine-dark);
+        }
+
+        .help-text {
+            display: block;
+            margin-top: 10px;
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.8;
+        }
+
+        .save-btn {
+            width: 100%;
+            min-height: 49px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 13px 22px;
+            border: 1px solid var(--wine);
+            border-radius: 999px;
+            background: var(--wine);
+            color: white;
+            font-family: inherit;
+            font-size: 12px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: background 0.2s ease, transform 0.2s ease;
+        }
+
+        .save-btn:hover {
+            background: var(--wine-dark);
+            transform: translateY(-1px);
+        }
+
+        footer {
+            padding: 24px 16px;
+            border-top: 1px solid var(--border);
+            background: #f1eadc;
+            color: var(--muted);
+            text-align: center;
+            font-size: 11px;
+            line-height: 1.8;
+        }
+
+        footer span {
+            color: var(--wine);
+            font-family: 'DM Serif Display', Georgia, serif;
+            font-size: 16px;
+        }
+
+        @media (max-width: 760px) {
+            .navbar {
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 15px;
+                padding: 14px 5%;
+            }
+
+            .nav-links {
+                width: 100%;
+                justify-content: flex-start;
+            }
+
+            .container {
+                padding: 38px 16px 50px;
+            }
+
+            .profile-card {
+                grid-template-columns: 1fr;
+                gap: 28px;
+                padding: 25px 20px;
+                border-radius: 17px;
+            }
+
+            .profile-left {
+                padding: 5px 0 27px;
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+            }
+
+            .profile-right h2 {
+                font-size: 28px;
+            }
+
+            .avatar {
+                width: 135px;
+                height: 135px;
+            }
+        }
+
+        @media (max-width: 420px) {
+            .brand {
+                gap: 10px;
+            }
+
+            .brand-mark {
+                width: 42px;
+                height: 42px;
+                font-size: 28px;
+            }
+
+            .logo {
+                font-size: 27px;
+            }
+
+            .brand-tagline {
+                font-size: 8px;
+                letter-spacing: 1.1px;
+            }
+
+            .page-heading h1 {
+                font-size: 38px;
+            }
+
+            .profile-card {
+                padding: 22px 16px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                scroll-behavior: auto !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+{% include 'reading/navbar.html' %}
+<body>
+<main class="container">
+
+    <div class="page-heading">
+        <div class="eyebrow">Your account</div>
+        <h1>My Profile <span>.</span></h1>
+        <p>View your account details and upload or change your profile picture.</p>
+    </div>
+
+    {% if messages %}
+        <div class="messages" role="status">
+            {% for message in messages %}
+                <div class="message">{{ message }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="profile-card">
+
+        <section class="profile-left">
+            <div class="avatar">
+                {% if profile.profile_image %}
+                    <img src="{{ profile.profile_image.url }}" alt="Profile Image">
+                {% else %}
+                    <span class="avatar-placeholder">
+                        {{ request.user.first_name|default:request.user.username|first|upper }}
+                    </span>
+                {% endif %}
+            </div>
+
+            <h2>
+                {{ request.user.get_full_name|default:request.user.username }}
+            </h2>
+
+            <p class="profile-email">
+                {{ request.user.email }}
+            </p>
+
+            <span class="profile-label">BookTrack Reader</span>
+        </section>
+
+        <section class="profile-right">
+            <h2>Upload Profile Image</h2>
+
+            <p class="section-description">
+                Choose an image from your computer and upload it as your profile picture.
+            </p>
+
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label for="profile_image">Select Image</label>
+
+                    <input
+                        type="file"
+                        id="profile_image"
+                        name="profile_image"
+                        class="form-control"
+                        accept="image/*"
+                        required
+                    >
+
+                    <span class="help-text">
+                        Select an image file, then click Upload Image.
+                    </span>
+                </div>
+
+                {% if error %}
+                    <div class="error-message">{{ error }}</div>
+                {% endif %}
+
+                <button type="submit" class="save-btn">
+                    Upload Image
+                </button>
+            </form>
+        </section>
+
+    </div>
+
+</main>
+
+{% include 'reading/footer.html' %}
+
+</body>
+</html>

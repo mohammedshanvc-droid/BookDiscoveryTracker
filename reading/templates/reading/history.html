@@ -1,0 +1,775 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reading History | BookTrack</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+:root {
+    --cream: #f8f4e9;
+    --paper: #fffdf7;
+    --ink: #29251f;
+    --muted: #706a60;
+    --wine: #7e2333;
+    --wine-dark: #641827;
+    --line: #e8e0d2;
+    --success: #356b4a;
+    --success-bg: #e9f1e4;
+    --serif: "DM Serif Display", Georgia, serif;
+    --sans: "Plus Jakarta Sans", Arial, sans-serif;
+    --shadow: 0 8px 28px rgba(53, 39, 23, 0.06);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    font-family: var(--sans);
+    color: var(--ink);
+    background: var(--cream);
+    line-height: 1.6;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    background: url("{% static 'images/index.png' %}") center / cover no-repeat;
+    opacity: 0.07;
+    pointer-events: none;
+}
+
+body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background: rgba(248, 244, 233, 0.82);
+    pointer-events: none;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+button,
+a {
+    -webkit-tap-highlight-color: transparent;
+}
+
+:focus-visible {
+    outline: 2px solid var(--wine);
+    outline-offset: 4px;
+}
+
+.container,
+.site-shell {
+    width: min(1240px, calc(100% - 64px));
+    margin: 0 auto;
+}
+
+/* Navigation (used by reading/navbar.html) */
+
+header.site-shell {
+    width: 100%;
+    padding: 0 max(32px, calc((100% - 1240px) / 2));
+    border-bottom: 1px solid var(--line);
+    background: rgba(248, 244, 233, 0.94);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+}
+
+.navbar {
+    min-height: 88px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+}
+
+.brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+    text-decoration: none;
+}
+
+.brand-mark {
+    width: 48px;
+    height: 48px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border-radius: 12px;
+    background: var(--wine);
+    color: var(--paper);
+    font-family: var(--serif);
+    font-size: 31px;
+    line-height: 1;
+}
+
+.brand > span:last-child {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-family: var(--serif);
+    font-size: 30px;
+    color: var(--ink);
+    line-height: 1.05;
+}
+
+.brand small {
+    color: var(--muted);
+    font-family: var(--sans);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    line-height: 1.5;
+    white-space: nowrap;
+}
+
+.nav-actions,
+.nav-links {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.nav-link,
+.nav-btn {
+    min-height: 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 19px;
+    border: 1px solid var(--wine);
+    border-radius: 999px;
+    background: var(--wine);
+    color: white;
+    font-family: var(--sans);
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background .2s ease, transform .2s ease,
+                box-shadow .2s ease;
+}
+
+.nav-link:hover,
+.nav-btn:hover {
+    background: var(--wine-dark);
+    border-color: var(--wine-dark);
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 5px 14px rgba(126, 35, 51, 0.16);
+}
+
+.nav-link.active {
+    background: var(--wine-dark);
+    border-color: var(--wine-dark);
+    color: white;
+}
+
+/* Page introduction */
+
+.hero {
+    padding-top: 54px;
+    padding-bottom: 32px;
+}
+
+.eyebrow {
+    display: inline-block;
+    margin-bottom: 13px;
+    color: var(--wine);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.eyebrow::before {
+    content: "";
+    display: inline-block;
+    width: 24px;
+    height: 1px;
+    margin: 0 9px 3px 0;
+    background: var(--wine);
+}
+
+.hero h1 {
+    margin-bottom: 14px;
+    font-family: var(--serif);
+    font-size: clamp(42px, 5vw, 62px);
+    font-weight: 400;
+    line-height: 1.12;
+    letter-spacing: -1px;
+}
+
+.hero h1 span {
+    color: var(--wine);
+}
+
+.subtitle {
+    max-width: 640px;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.9;
+}
+
+.history-count {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 20px;
+    padding: 8px 13px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--paper);
+    color: var(--wine);
+    font-size: 11px;
+    font-weight: 700;
+}
+
+main.container {
+    flex: 1;
+    padding-top: 14px;
+    padding-bottom: 70px;
+}
+
+/* Section heading */
+
+.section-heading {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 24px;
+    padding-bottom: 17px;
+    border-bottom: 1px solid var(--line);
+}
+
+.section-heading h2 {
+    font-family: var(--serif);
+    font-size: clamp(27px, 3vw, 36px);
+    font-weight: 400;
+    line-height: 1.2;
+}
+
+.section-heading h2 span {
+    color: var(--wine);
+}
+
+.section-heading p {
+    color: var(--muted);
+    font-size: 11px;
+}
+
+/* Completed book grid */
+
+.book-list {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    align-items: stretch;
+    gap: 22px;
+}
+
+.book-card {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: rgba(255, 253, 247, 0.96);
+    box-shadow: var(--shadow);
+    transition: transform .22s ease, box-shadow .22s ease,
+                border-color .22s ease;
+}
+
+.book-card:hover {
+    transform: translateY(-4px);
+    border-color: #cba9a5;
+    box-shadow: 0 14px 32px rgba(53, 39, 23, 0.10);
+}
+
+.cover-area {
+    width: 100%;
+    height: 235px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    margin-bottom: 17px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: #f0e8dc;
+}
+
+.book-cover {
+    display: block;
+    width: 100%;
+    height: 100%;
+    padding: 7px;
+    object-fit: contain;
+}
+
+.no-cover {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 16px;
+    color: var(--muted);
+    text-align: center;
+    font-size: 11px;
+}
+
+.no-cover-symbol {
+    color: var(--wine);
+    font-family: var(--serif);
+    font-size: 42px;
+}
+
+.book-title {
+    margin-bottom: 9px;
+    color: var(--ink);
+    font-family: var(--serif);
+    font-size: 21px;
+    font-weight: 400;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+}
+
+.author {
+    margin-bottom: 17px;
+    color: var(--muted);
+    font-size: 11px;
+    line-height: 1.8;
+    overflow-wrap: anywhere;
+}
+
+.author strong {
+    color: var(--ink);
+    font-weight: 700;
+}
+
+.completed {
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    border: 1px solid #cbdcc9;
+    border-radius: 999px;
+    background: var(--success-bg);
+    color: var(--success);
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.completed::before {
+    content: "✓";
+    font-size: 12px;
+}
+
+.date {
+    margin-top: auto;
+    padding-top: 15px;
+    border-top: 1px solid var(--line);
+    color: var(--muted);
+    font-size: 10px;
+    line-height: 1.8;
+    overflow-wrap: anywhere;
+}
+
+.date strong {
+    color: var(--ink);
+    font-weight: 700;
+}
+
+.completed + .date {
+    margin-top: 17px;
+}
+
+/* Empty state */
+
+.empty {
+    padding: 58px 24px;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: rgba(255, 253, 247, 0.96);
+    box-shadow: var(--shadow);
+    text-align: center;
+}
+
+.empty-icon {
+    margin-bottom: 15px;
+    color: var(--wine);
+    font-family: var(--serif);
+    font-size: 43px;
+}
+
+.empty h2 {
+    margin-bottom: 12px;
+    font-family: var(--serif);
+    font-size: 32px;
+    font-weight: 400;
+    line-height: 1.2;
+}
+
+.empty p {
+    max-width: 490px;
+    margin: 0 auto 24px;
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.9;
+}
+
+.empty .btn-link {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 24px;
+    border: 1px solid var(--wine);
+    border-radius: 999px;
+    background: var(--wine);
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    transition: background .2s ease, transform .2s ease;
+}
+
+.empty .btn-link:hover {
+    background: var(--wine-dark);
+    transform: translateY(-1px);
+}
+
+/* Footer (used by reading/footer.html) */
+
+.site-footer {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 23px 16px;
+    border-top: 1px solid var(--line);
+    background: rgba(248, 244, 233, 0.94);
+    color: var(--muted);
+    text-align: center;
+    font-size: 10px;
+    letter-spacing: .4px;
+}
+
+.site-footer span:first-child {
+    color: var(--wine);
+    font-weight: 700;
+}
+
+/* Responsive layout */
+
+@media (max-width: 1050px) {
+    .book-list {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    header.site-shell {
+        padding-left: 24px;
+        padding-right: 24px;
+    }
+
+    .nav-actions,
+    .nav-links {
+        gap: 7px;
+    }
+
+    .nav-link,
+    .nav-btn {
+        padding: 0 14px;
+    }
+}
+
+@media (max-width: 760px) {
+    .container,
+    .site-shell {
+        width: calc(100% - 36px);
+    }
+
+    header.site-shell {
+        padding-left: 18px;
+        padding-right: 18px;
+    }
+
+    .navbar {
+        min-height: 0;
+        padding: 15px 0;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .brand-mark {
+        width: 42px;
+        height: 42px;
+        font-size: 28px;
+    }
+
+    .brand > span:last-child {
+        font-size: 26px;
+    }
+
+    .brand small {
+        font-size: 8px;
+    }
+
+    .nav-actions,
+    .nav-links {
+        justify-content: flex-start;
+    }
+
+    .hero {
+        padding-top: 38px;
+        padding-bottom: 25px;
+    }
+
+    .book-list {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 15px;
+    }
+
+    .cover-area {
+        height: 205px;
+    }
+
+    .book-title {
+        font-size: 18px;
+    }
+}
+
+@media (max-width: 480px) {
+    .container,
+    .site-shell {
+        width: calc(100% - 28px);
+    }
+
+    header.site-shell {
+        padding-left: 14px;
+        padding-right: 14px;
+    }
+
+    .navbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .nav-actions,
+    .nav-links {
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .nav-link,
+    .nav-btn {
+        width: 100%;
+    }
+
+    .hero h1 {
+        font-size: 39px;
+    }
+
+    .section-heading {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .book-list {
+        gap: 11px;
+    }
+
+    .book-card {
+        padding: 10px;
+        border-radius: 10px;
+    }
+
+    .cover-area {
+        height: 165px;
+        margin-bottom: 12px;
+    }
+
+    .book-title {
+        font-size: 16px;
+    }
+
+    .author {
+        font-size: 10px;
+    }
+
+    .completed {
+        padding: 5px 7px;
+        font-size: 9px;
+    }
+
+    .empty {
+        padding: 42px 16px;
+    }
+}
+
+@media (max-width: 340px) {
+    .book-list {
+        grid-template-columns: 1fr;
+    }
+
+    .cover-area {
+        height: 250px;
+    }
+
+    .book-card {
+        padding: 15px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        transition-duration: .01ms !important;
+    }
+}
+</style>    
+</head>
+{% include 'reading/navbar.html' %}
+<body>
+<section class="container hero">
+        <p class="eyebrow">Your reading journey</p>
+
+        <h1>My Reading <span>History</span></h1>
+
+        <p class="subtitle">
+            Look back at the books you've completed and celebrate every
+            step of your reading journey. Every finished book is a new
+            chapter in your story.
+        </p>
+
+        <span class="history-count">
+            ✓ {{ books|length }} completed book{{ books|length|pluralize }}
+        </span>
+    </section>
+
+    <main class="container">
+
+        {% if books %}
+
+            <section class="section-heading">
+                <h2>Your <span>Completed Books</span></h2>
+                <p>A collection of books you've finished.</p>
+            </section>
+
+            <section class="book-list">
+
+                {% for book in books %}
+
+                    <article class="book-card">
+
+                        <div class="cover-area">
+                            {% if book.cover_url %}
+                                <img
+                                    src="{{ book.cover_url }}"
+                                    alt="{{ book.title }} cover"
+                                    class="book-cover"
+                                    loading="lazy"
+                                >
+                            {% else %}
+                                <div class="no-cover">
+                                    <span class="no-cover-symbol">▤</span>
+                                    <span>No cover available</span>
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <h2 class="book-title">
+                            {{ book.title }}
+                        </h2>
+
+                        <p class="author">
+                            <strong>Author:</strong>
+                            {{ book.author|default:"Unknown author" }}
+                        </p>
+
+                        <span class="completed">
+                            Completed
+                        </span>
+
+                        <p class="date">
+                            {% if book.completed_at %}
+                                <strong>Completed on:</strong>
+                                {{ book.completed_at|date:"d M Y" }}
+                            {% else %}
+                                Completion date not recorded
+                            {% endif %}
+                        </p>
+
+                    </article>
+
+                {% endfor %}
+
+            </section>
+
+        {% else %}
+
+            <section class="empty">
+                <div class="empty-icon">▤</div>
+
+                <h2>No Completed Books Yet</h2>
+
+                <p>
+                    When you mark a book as Completed in your reading list,
+                    it will appear here. Keep reading, and your collection
+                    of finished books will grow.
+                </p>
+
+                <a href="{% url 'reading' %}" class="btn-link">
+                    View My Reading List
+                </a>
+            </section>
+
+        {% endif %}
+
+    </main>
+
+    {% include 'reading/footer.html' %}
+
+</body>
+</html>
+
+

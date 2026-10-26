@@ -1,0 +1,455 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#07111f">
+
+    <title>Login | BookTrack</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --cream: #f8f4e9;
+            --paper: #fffdf7;
+            --ink: #29251f;
+            --muted: #706a60;
+            --wine: #7e2333;
+            --wine-dark: #641827;
+            --line: #e8e0d2;
+            --serif: "DM Serif Display", Georgia, serif;
+            --sans: "Plus Jakarta Sans", Arial, sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            min-height: 100%;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 48px;
+            padding: 40px 8%;
+            font-family: var(--sans);
+            color: var(--ink);
+            background-color: #07111f;
+            position: relative;
+            isolation: isolate;
+            overflow-x: hidden;
+        }
+
+        /* VIDEO BACKGROUND */
+        .video-background {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -2;
+            pointer-events: none;
+        }
+
+        /* DARK OVERLAY */
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            {% comment %} background: linear-gradient(
+                90deg,
+                rgba(7, 17, 31, 0.88),
+                rgba(7, 17, 31, 0.55) {% endcomment %}
+            {% comment %} ); {% endcomment %}
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* LEFT INTRODUCTION */
+        .intro {
+            flex: 1;
+            max-width: 560px;
+            color: var(--paper);
+        }
+
+        .intro .label {
+            color: #f5c76b;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 22px;
+        }
+
+        .intro h1 {
+            font-family: var(--serif);
+            font-size: clamp(44px, 5vw, 68px);
+            font-weight: 400;
+            line-height: 1.08;
+            margin-bottom: 22px;
+        }
+
+        .intro h1 span {
+            color: #f5c76b;
+            font-style: italic;
+        }
+
+        .intro .description {
+            max-width: 440px;
+            color: #f0eee8;
+            font-size: 13px;
+            line-height: 1.9;
+        }
+
+        /* LOGIN CARD */
+        .login-card {
+            width: 100%;
+            max-width: 390px;
+            flex-shrink: 0;
+            padding: 36px 30px;
+            border-radius: 18px;
+            background: rgba(255, 253, 247, 0.96);
+            border: 1px solid rgba(255, 255, 255, 0.65);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+        }
+
+        /* BRAND */
+        .brand {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .brand-name {
+            font-family: var(--serif);
+            color: var(--wine);
+            font-size: 35px;
+            line-height: 1.2;
+        }
+
+        .brand p {
+            color: var(--muted);
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            margin-top: 6px;
+        }
+
+        .heading {
+            color: var(--ink);
+            font-family: var(--serif);
+            font-size: 29px;
+            font-weight: 400;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        /* DJANGO MESSAGES */
+        .messages {
+            color: #7e2333;
+            background: #f8e9e9;
+            border: 1px solid #e8c6c6;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 12px;
+            line-height: 1.6;
+            text-align: center;
+            margin-bottom: 18px;
+        }
+
+        /* FORM FIELDS */
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            color: var(--ink);
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .form-group input {
+            width: 100%;
+            min-height: 48px;
+            padding: 12px 14px;
+            border: 1px solid #d9d0c1;
+            border-radius: 8px;
+            background: #fffefa;
+            color: var(--ink);
+            font-family: var(--sans);
+            font-size: 13px;
+            outline: none;
+            transition: border-color .2s, box-shadow .2s;
+        }
+
+        .form-group input::placeholder {
+            color: #a39b90;
+        }
+
+        .form-group input:focus {
+            border-color: var(--wine);
+            box-shadow: 0 0 0 3px rgba(126, 35, 51, 0.1);
+        }
+
+        /* FORGOT PASSWORD */
+        .forgot {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            min-height: 36px;
+            color: var(--wine);
+            font-size: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            margin-bottom: 12px;
+        }
+
+        /* SIGN IN BUTTON */
+        .login-btn {
+            width: 100%;
+            min-height: 48px;
+            padding: 12px 16px;
+            border: 1px solid var(--wine);
+            border-radius: 999px;
+            background: var(--wine);
+            color: white;
+            font-family: var(--sans);
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background .2s, transform .2s;
+        }
+
+        .login-btn:hover {
+            background: var(--wine-dark);
+            transform: translateY(-1px);
+        }
+
+        /* REGISTER LINK */
+        .register-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 5px;
+            color: var(--muted);
+            font-size: 12px;
+            margin-top: 20px;
+        }
+
+        .register-link a {
+            color: var(--wine);
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        /* BACK TO HOME */
+        .back-home {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 42px;
+            color: var(--muted);
+            font-size: 12px;
+            text-decoration: none;
+            margin-top: 8px;
+        }
+
+        .forgot:hover,
+        .register-link a:hover,
+        .back-home:hover {
+            color: var(--wine-dark);
+            text-decoration: underline;
+        }
+
+        /* ACCESSIBILITY */
+        .form-group input:focus-visible,
+        .login-btn:focus-visible,
+        .forgot:focus-visible,
+        .register-link a:focus-visible,
+        .back-home:focus-visible {
+            outline: 2px solid var(--wine);
+            outline-offset: 3px;
+        }
+
+        /* TABLET */
+        @media (max-width: 1023px) {
+            body {
+                gap: 30px;
+                padding: 36px 5%;
+            }
+
+            .intro {
+                max-width: 440px;
+            }
+
+            .intro h1 {
+                font-size: clamp(38px, 4.5vw, 54px);
+            }
+
+            .intro .description {
+                font-size: 12px;
+            }
+
+            .login-card {
+                max-width: 360px;
+                padding: 30px 24px;
+            }
+        }
+
+        /* MOBILE */
+        @media (max-width: 767px) {
+            body {
+                justify-content: center;
+                padding: 24px 16px;
+            }
+
+            .intro {
+                display: none;
+            }
+
+            .login-card {
+                width: 100%;
+                max-width: 400px;
+                padding: 32px 24px;
+            }
+
+            .video-background {
+                object-position: center;
+            }
+        }
+
+        @media (max-width: 380px) {
+            .login-card {
+                padding: 27px 18px;
+            }
+
+            .brand-name {
+                font-size: 31px;
+            }
+
+            .heading {
+                font-size: 26px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                transition: none !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- VIDEO BACKGROUND -->
+    <video class="video-background"
+           autoplay
+           muted
+           loop
+           playsinline
+           preload="auto"
+           aria-hidden="true">
+        <source src="{% static 'images/141519-777930387_medium.mp4' %}"
+                type="video/mp4">
+    </video>
+
+    <!-- LEFT INTRODUCTION -->
+    <section class="intro">
+        <p class="label">Your personal reading space</p>
+
+        <h1>
+            Your next story<br>
+            is <span>waiting.</span>
+        </h1>
+
+        <p class="description">
+            Log in to pick up where you left off, revisit your saved books
+            and keep your reading journey on track.
+        </p>
+    </section>
+
+    <!-- LOGIN CARD -->
+    <div class="login-card">
+
+        <div class="brand">
+            <div class="brand-name">BookTrack</div>
+            <p>READ · EXPLORE · GROW</p>
+        </div>
+
+        <h2 class="heading">Welcome back</h2>
+
+        <!-- DJANGO MESSAGES -->
+        {% if messages %}
+            <div class="messages" role="alert">
+                {% for message in messages %}
+                    {{ message }}
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <!-- LOGIN FORM -->
+        <form method="POST">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    placeholder="Enter your username"
+                    autocomplete="username"
+                    required>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="Enter your password"
+                    autocomplete="current-password"
+                    required>
+            </div>
+
+            <a href="{% url 'password_reset' %}" class="forgot">
+                Forgot password?
+            </a>
+
+            <button type="submit" class="login-btn">
+                Sign in
+            </button>
+        </form>
+
+        <!-- REGISTER -->
+        <div class="register-link">
+            New here?
+            <a href="{% url 'register' %}">Create account</a>
+        </div>
+
+        <!-- HOME -->
+        <a href="{% url 'index' %}" class="back-home">
+            &larr; Back to home
+        </a>
+        
+    </div>
+
+</body>
+</html>

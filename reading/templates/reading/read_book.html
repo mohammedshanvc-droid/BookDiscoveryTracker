@@ -1,0 +1,649 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{{ title|default:"Book Reader" }} | BookTrack</title>
+
+    <style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f7f3ed;
+    color: #35241f;
+    min-height: 100vh;
+    line-height: 1.6;
+}
+
+/* Navbar (used by reading/navbar.html) */
+
+header {
+    background: #572b35;
+    color: white;
+    padding: 18px 6%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 22px;
+    box-shadow: 0 5px 20px rgba(53, 36, 31, 0.12);
+    position: relative;
+    z-index: 10;
+}
+
+header a {
+    color: white;
+    text-decoration: none;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    flex-shrink: 0;
+}
+
+.brand-mark {
+    width: 43px;
+    height: 43px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #f7f3ed;
+    color: #572b35;
+    border-radius: 13px;
+    font-size: 27px;
+    font-weight: bold;
+}
+
+.brand-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.brand-name {
+    font-size: 23px;
+    font-weight: bold;
+    line-height: 1.2;
+    letter-spacing: 0.3px;
+}
+
+.brand-tagline {
+    font-size: 9px;
+    letter-spacing: 1.4px;
+    color: #ead9dc;
+    font-weight: 600;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 7px;
+    flex-wrap: wrap;
+}
+
+.nav-links a {
+    font-size: 13px;
+    font-weight: 600;
+    padding: 10px 13px;
+    border-radius: 25px;
+    transition: background 0.25s ease, transform 0.25s ease;
+}
+
+.nav-links a:hover {
+    background: rgba(255, 255, 255, 0.13);
+    transform: translateY(-1px);
+}
+
+.nav-links .logout-btn {
+    background: #f7f3ed;
+    color: #572b35;
+    padding: 10px 18px;
+}
+
+.nav-links .logout-btn:hover {
+    background: #e8dcd5;
+}
+
+/* Main Layout */
+
+main {
+    width: 94%;
+    max-width: 1450px;
+    margin: 34px auto;
+}
+
+/* Book Information */
+
+.book-info {
+    background: white;
+    padding: 32px;
+    border-radius: 16px 16px 0 0;
+    border-bottom: 1px solid #eee5df;
+    box-shadow: 0 8px 25px rgba(53, 36, 31, 0.05);
+}
+
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    color: #80505a;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 22px;
+}
+
+.back-link:hover {
+    text-decoration: underline;
+}
+
+h1 {
+    font-size: clamp(26px, 4vw, 38px);
+    line-height: 1.3;
+    margin-bottom: 12px;
+    overflow-wrap: anywhere;
+    letter-spacing: -0.5px;
+}
+
+.author {
+    color: #777;
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
+.reader-label {
+    display: inline-block;
+    background: #e5f3e8;
+    color: #28613b;
+    padding: 7px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+    letter-spacing: 0.3px;
+}
+
+/* Buttons */
+
+.button-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 25px;
+}
+
+.button {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 21px;
+    border: none;
+    border-radius: 9px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.25s ease, transform 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+.button:hover {
+    transform: translateY(-2px);
+}
+
+.button-primary {
+    background: #572b35;
+    color: white;
+    box-shadow: 0 4px 10px rgba(87, 43, 53, 0.15);
+}
+
+.button-primary:hover {
+    background: #713b47;
+    box-shadow: 0 6px 14px rgba(87, 43, 53, 0.2);
+}
+
+.button-secondary {
+    background: #eee7df;
+    color: #35241f;
+}
+
+.button-secondary:hover {
+    background: #e1d5ca;
+}
+
+/* Reader Card */
+
+.reader-card {
+    background: white;
+    padding: 28px;
+    border-radius: 0 0 16px 16px;
+    box-shadow: 0 10px 25px rgba(53, 36, 31, 0.05);
+}
+
+.reader-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-bottom: 22px;
+}
+
+.reader-heading h2 {
+    font-size: 22px;
+    line-height: 1.4;
+    color: #35241f;
+}
+
+.reader-heading p {
+    color: #777;
+    font-size: 13px;
+    margin-top: 6px;
+}
+
+/* Book Reading Frame */
+
+.reader-frame {
+    width: 100%;
+    height: 85vh;
+    min-height: 550px;
+    background: #f5f1ec;
+    border: 1px solid #e8dfd7;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: inset 0 2px 8px rgba(53, 36, 31, 0.04);
+}
+
+.reader-frame iframe {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    background: white;
+}
+
+/* Messages */
+
+.message {
+    padding: 17px 20px;
+    border-radius: 10px;
+    margin: 20px 0;
+    line-height: 1.8;
+    font-size: 14px;
+}
+
+.message-warning {
+    background: #fff4dd;
+    color: #78552e;
+    border: 1px solid #f0dfb8;
+}
+
+.message-info {
+    background: #edf3fa;
+    color: #315777;
+    border: 1px solid #d6e4f3;
+}
+
+/* Reader Unavailable */
+
+.reader-unavailable {
+    min-height: 400px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 35px;
+    text-align: center;
+    background: #fcfaf8;
+    border: 1px dashed #d8c8bd;
+    border-radius: 12px;
+}
+
+.reader-unavailable h3 {
+    font-size: 24px;
+    line-height: 1.4;
+    margin-bottom: 14px;
+}
+
+.reader-unavailable p {
+    max-width: 650px;
+    margin: 0 auto 18px;
+    color: #6d625d;
+    line-height: 1.8;
+    font-size: 14px;
+}
+
+
+
+.progress-card {
+    margin-top: 24px;
+    padding: 22px;
+    border: 1px solid #eee5df;
+    background: #fcfaf8;
+    border-radius: 12px;
+    transition: box-shadow 0.25s ease;
+}
+
+.progress-card:hover {
+    box-shadow: 0 5px 16px rgba(53, 36, 31, 0.06);
+}
+
+.progress-card h3 {
+    font-size: 17px;
+    margin-bottom: 9px;
+}
+
+.progress-card p {
+    font-size: 13px;
+    color: #777;
+    line-height: 1.8;
+    margin-top: 6px;
+}
+
+/* Footer */
+
+footer {
+    text-align: center;
+    padding: 28px 15px;
+    color: #888;
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+/* Tablet */
+
+@media (max-width: 900px) {
+    header {
+        padding: 18px 4%;
+    }
+
+    .nav-links {
+        justify-content: flex-start;
+        gap: 6px;
+    }
+
+    .nav-links a {
+        padding: 9px 11px;
+    }
+
+    main {
+        width: 95%;
+    }
+
+    .book-info {
+        padding: 27px;
+    }
+
+    .reader-card {
+        padding: 22px;
+    }
+}
+
+/* Mobile */
+
+@media (max-width: 650px) {
+    header {
+        padding: 17px 5%;
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .brand-mark {
+        width: 40px;
+        height: 40px;
+        font-size: 25px;
+    }
+
+    .brand-name {
+        font-size: 22px;
+    }
+
+    .brand-tagline {
+        font-size: 8px;
+    }
+
+    .nav-links {
+        width: 100%;
+    }
+
+    .nav-links a {
+        font-size: 12px;
+    }
+
+    main {
+        margin: 22px auto;
+        width: 94%;
+    }
+
+    .book-info {
+        padding: 22px;
+        border-radius: 13px 13px 0 0;
+    }
+
+    h1 {
+        font-size: 27px;
+    }
+
+    .author {
+        font-size: 14px;
+    }
+
+    .button-row {
+        gap: 10px;
+    }
+
+    .button {
+        flex: 1 1 100%;
+        padding: 13px 16px;
+    }
+
+    .reader-card {
+        padding: 17px;
+        border-radius: 0 0 13px 13px;
+    }
+
+    .reader-heading h2 {
+        font-size: 20px;
+    }
+
+    .reader-frame {
+        height: 75vh;
+        min-height: 450px;
+        border-radius: 9px;
+    }
+
+    .reader-unavailable {
+        min-height: 320px;
+        padding: 22px;
+    }
+
+    .reader-unavailable h3 {
+        font-size: 21px;
+    }
+
+    .progress-card {
+        padding: 18px;
+    }
+
+    footer {
+        padding: 23px 15px;
+    }
+}
+
+/* Small Mobile */
+
+@media (max-width: 380px) {
+    .nav-links {
+        gap: 4px;
+    }
+
+    .nav-links a {
+        padding: 7px 9px;
+    }
+
+    .brand-name {
+        font-size: 21px;
+    }
+
+    .book-info {
+        padding: 18px;
+    }
+
+    .reader-card {
+        padding: 12px;
+    }
+
+    h1 {
+        font-size: 24px;
+    }
+}
+
+</style>
+</head>
+{% include 'reading/navbar.html' %}
+<body>
+<main>
+
+    <section class="book-info">
+
+        <a class="back-link" href="{% url 'reading' %}">
+            &#8592; Back to My Reading List
+        </a>
+
+        <h1>{{ title|default:"Book Reader" }}</h1>
+
+        <p class="author">
+            By {{ author|default:"Unknown author" }}
+        </p>
+
+        {% if embed_url %}
+            <span class="reader-label">
+                Open Library / Internet Archive Reader
+            </span>
+        {% endif %}
+
+        {% if error %}
+            <div class="message message-warning">
+                {{ error }}
+            </div>
+        {% endif %}
+
+        <div class="button-row">
+
+            {% if reading_url %}
+                <a
+                    class="button button-primary"
+                    href="{{ reading_url }}"
+                    target="_blank"
+                    rel="noopener noreferrer">
+                    Open Book Online &#8599;
+                </a>
+            {% endif %}
+
+            <a
+                class="button button-secondary"
+                href="https://openlibrary.org/search?q={{ title|urlencode }}"
+                target="_blank"
+                rel="noopener noreferrer">
+                Find Other Editions
+            </a>
+
+        </div>
+
+    </section>
+
+    <section class="reader-card">
+
+        <div class="reader-heading">
+            <div>
+                <h2>Read Your Book</h2>
+                <p>BookTrack Online Reader</p>
+            </div>
+        </div>
+
+        {% if embed_url %}
+
+            <div class="reader-frame">
+                <iframe
+                    src="{{ embed_url }}"
+                    title="Online reader for {{ title }}"
+                    allowfullscreen>
+                </iframe>
+            </div>
+
+            <div class="message message-info">
+                The reader displays the pages available for this edition.
+                If pages are restricted or the reader does not load,
+                use Open Book Online to check the available reading
+                or borrowing options.
+            </div>
+
+        {% else %}
+
+            <div class="reader-unavailable">
+                <div>
+                    <h3>Embedded Reader Unavailable</h3>
+
+                    <p>
+                        {{ error|default:"An embedded reader was not found for this book." }}
+                    </p>
+
+                    <p>
+                        Search for another edition or check whether
+                        Open Library offers an online reading or
+                        borrowing option.
+                    </p>
+
+                    <a
+                        class="button button-primary"
+                        href="https://openlibrary.org/search?q={{ title|urlencode }}"
+                        target="_blank"
+                        rel="noopener noreferrer">
+                        Search Open Library
+                    </a>
+
+                    {% if reading_url %}
+                        <a
+                            class="button button-secondary"
+                            href="{{ reading_url }}"
+                            target="_blank"
+                            rel="noopener noreferrer">
+                            Check This Edition
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+
+        {% endif %}
+
+        <div class="progress-card">
+            <h3>Your Reading Progress</h3>
+
+            <p>
+                Last saved page in BookTrack:
+                <strong>{{ last_page|default:1 }}</strong>
+            </p>
+
+            <p>
+                This page number is saved in your BookTrack database.
+                It is not automatically synchronized with the
+                embedded reader.
+            </p>
+        </div>
+
+    </section>
+
+</main>
+{% include 'reading/footer.html' %}
+</body>
+</html>

@@ -1,0 +1,825 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Reading List | BookTrack</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+:root {
+    --background: #f8f4e9;
+    --surface: #fffdf8;
+    --surface-soft: #f2ebdf;
+    --accent: #7e2333;
+    --accent-hover: #641827;
+    --green: #315c45;
+    --green-hover: #234532;
+    --text: #29251f;
+    --muted: #706a60;
+    --border: #e8e0d2;
+    --success: #376c48;
+    --danger: #a83242;
+    --shadow: 0 8px 24px rgba(63, 37, 30, 0.07);
+    --serif: "DM Serif Display", Georgia, serif;
+    --sans: "Plus Jakarta Sans", Arial, sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    font-family: var(--sans);
+    color: var(--text);
+    background: var(--background);
+    line-height: 1.6;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    background: url("{% static 'images/index.png' %}") center / cover no-repeat;
+    opacity: 0.10;
+    pointer-events: none;
+}
+
+body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background: rgba(248, 244, 233, 0.74);
+    pointer-events: none;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+button,
+select {
+    font: inherit;
+    -webkit-tap-highlight-color: transparent;
+}
+
+:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+}
+
+/* PAGE LAYOUT */
+
+.container,
+.site-shell {
+    width: min(1240px, calc(100% - 64px));
+    margin-right: auto;
+    margin-left: auto;
+}
+
+body > header.site-shell {
+    flex-shrink: 0;
+}
+
+/* INTRO */
+
+.intro {
+    padding-top: 48px;
+    padding-bottom: 34px;
+}
+
+.eyebrow {
+    display: inline-block;
+    margin-bottom: 15px;
+    padding: 7px 12px;
+    border: 1px solid #e5cfc2;
+    border-radius: 5px;
+    background: #f2e7da;
+    color: var(--accent);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+}
+
+.intro h1 {
+    margin-bottom: 12px;
+    font-family: var(--serif);
+    font-size: clamp(36px, 5vw, 49px);
+    font-weight: 400;
+    line-height: 1.17;
+    letter-spacing: -0.6px;
+}
+
+.intro h1 span,
+.section-heading h2 span {
+    color: var(--accent);
+}
+
+.intro p {
+    max-width: 690px;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.9;
+}
+
+.book-count {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 20px;
+    padding: 9px 13px;
+    border: 1px solid #e5cfc2;
+    border-radius: 5px;
+    background: #f2e7da;
+    color: var(--accent);
+    font-size: 11px;
+    font-weight: 700;
+}
+
+/* MAIN CONTENT AND MESSAGES */
+
+main.container {
+    flex: 1;
+    padding-top: 8px;
+    padding-bottom: 64px;
+}
+
+.messages {
+    margin-bottom: 25px;
+}
+
+.message {
+    margin-bottom: 10px;
+    padding: 13px 16px;
+    border: 1px solid #cbdcc6;
+    border-radius: 7px;
+    background: #edf4e9;
+    color: #315d38;
+    font-size: 12px;
+    line-height: 1.7;
+}
+
+.message.error {
+    border-color: #e5c8c5;
+    background: #fff0ed;
+    color: var(--danger);
+}
+
+/* SECTION HEADING */
+
+.section-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.section-heading h2 {
+    font-family: var(--serif);
+    font-size: 29px;
+    font-weight: 400;
+}
+
+.section-heading p {
+    color: var(--muted);
+    font-size: 12px;
+}
+
+/* BOOK GRID AND CARDS */
+
+.book-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    align-items: stretch;
+    gap: 20px;
+}
+
+.book-card {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: rgba(255, 253, 248, 0.96);
+    box-shadow: var(--shadow);
+    transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+}
+
+.book-card:hover {
+    transform: translateY(-3px);
+    border-color: #cfaeaa;
+    box-shadow: 0 12px 28px rgba(63, 37, 30, 0.11);
+}
+
+.cover-area {
+    height: 225px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+    overflow: hidden;
+    border: 1px solid #e9dfd2;
+    border-radius: 6px;
+    background: var(--surface-soft);
+}
+
+.cover {
+    width: 100%;
+    height: 100%;
+    padding: 8px;
+    object-fit: contain;
+}
+
+.no-cover {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 20px;
+    color: var(--muted);
+    text-align: center;
+    font-size: 12px;
+}
+
+.no-cover span {
+    color: var(--accent);
+    font-size: 38px;
+}
+
+.book-title {
+    margin-bottom: 14px;
+    color: #302422;
+    font-family: var(--serif);
+    font-size: 19px;
+    font-weight: 400;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+}
+
+.book-info {
+    display: grid;
+    gap: 12px;
+    margin-bottom: 15px;
+}
+
+.info-row {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.info-label {
+    color: #8b7970;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+}
+
+.info-value {
+    color: #514640;
+    font-size: 12px;
+    line-height: 1.65;
+    overflow-wrap: anywhere;
+}
+
+.info-value.status {
+    color: var(--accent);
+    font-weight: 700;
+}
+
+.favorite {
+    display: inline-flex;
+    align-self: flex-start;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 12px;
+    padding: 6px 9px;
+    border: 1px solid #e7d3a9;
+    border-radius: 5px;
+    background: #f9f0d9;
+    color: #80591a;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+/* BOOK ACTIONS */
+
+.book-actions {
+    margin-top: auto;
+    padding-top: 15px;
+    border-top: 1px solid var(--border);
+}
+
+.book-actions form {
+    margin-top: 9px;
+}
+
+.book-actions label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.book-actions select {
+    width: 100%;
+    min-height: 42px;
+    margin-bottom: 10px;
+    padding: 9px 12px;
+    border: 1px solid #ddcfc1;
+    border-radius: 6px;
+    background: var(--surface);
+    color: #40332e;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.book-actions select:focus {
+    border-color: var(--accent);
+    outline: 2px solid rgba(126, 35, 51, 0.12);
+}
+
+.action-btn {
+    width: 100%;
+    min-height: 41px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 12px;
+    border: 1px solid #ddcfc1;
+    border-radius: 6px;
+    background: var(--surface);
+    color: #5b393a;
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1.5;
+    text-align: center;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.action-btn:hover {
+    border-color: var(--accent);
+    background: #f5eae2;
+    color: var(--accent);
+}
+
+.action-btn.update {
+    border-color: var(--accent);
+    background: var(--accent);
+    color: #fffaf3;
+}
+
+.action-btn.update:hover {
+    border-color: var(--accent-hover);
+    background: var(--accent-hover);
+    color: #fff;
+}
+
+.action-btn.read-book {
+    margin-bottom: 9px;
+    border-color: var(--green);
+    background: var(--green);
+    color: #fff;
+}
+
+.action-btn.read-book:hover {
+    border-color: var(--green-hover);
+    background: var(--green-hover);
+    color: #fff;
+}
+
+.action-btn.remove {
+    border-color: #e5c8c5;
+    background: #fff8f5;
+    color: var(--danger);
+}
+
+.action-btn.remove:hover {
+    border-color: var(--danger);
+    background: var(--danger);
+    color: #fff;
+}
+
+/* EMPTY STATE */
+
+.empty {
+    padding: 65px 24px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: rgba(255, 253, 248, 0.96);
+    box-shadow: var(--shadow);
+    text-align: center;
+}
+
+.empty-icon {
+    margin-bottom: 17px;
+    color: var(--accent);
+    font-size: 43px;
+}
+
+.empty h2 {
+    margin-bottom: 12px;
+    color: #302422;
+    font-family: var(--serif);
+    font-size: 31px;
+    font-weight: 400;
+}
+
+.empty p {
+    max-width: 530px;
+    margin: 0 auto 25px;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.9;
+}
+
+.discover-btn {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 24px;
+    border: 1px solid var(--accent);
+    border-radius: 999px;
+    background: var(--accent);
+    color: #fffaf3;
+    font-size: 12px;
+    font-weight: 700;
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.discover-btn:hover {
+    background: var(--accent-hover);
+    color: #fff;
+    transform: translateY(-1px);
+}
+
+/* FOOTER */
+
+footer {
+    width: 100%;
+    margin-top: auto;
+    padding: 22px 0;
+    border-top: 1px solid var(--border);
+    background: rgba(248, 244, 233, 0.94);
+    color: var(--muted);
+    font-size: 10px;
+    letter-spacing: 0.5px;
+    text-align: center;
+    line-height: 1.8;
+}
+
+.footer-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    text-align: center;
+}
+
+.footer-inner span:first-child {
+    color: var(--accent);
+    font-weight: 700;
+}
+
+.footer-inner span:last-child {
+    color: var(--muted);
+}
+
+/* RESPONSIVE LAYOUT */
+
+@media (max-width: 1100px) {
+    .container,
+    .site-shell {
+        width: calc(100% - 40px);
+    }
+
+    .book-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 18px;
+    }
+}
+
+@media (max-width: 800px) {
+    .container,
+    .site-shell {
+        width: calc(100% - 36px);
+    }
+
+    .intro {
+        padding-top: 35px;
+    }
+
+    .book-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 15px;
+    }
+
+    .cover-area {
+        height: 210px;
+    }
+}
+
+@media (max-width: 480px) {
+    .container,
+    .site-shell {
+        width: calc(100% - 28px);
+    }
+
+    .intro {
+        padding-top: 30px;
+        padding-bottom: 26px;
+    }
+
+    .intro h1 {
+        font-size: 36px;
+    }
+
+    .section-heading {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .book-grid {
+        gap: 11px;
+    }
+
+    .book-card {
+        padding: 10px;
+    }
+
+    .cover-area {
+        height: 165px;
+        margin-bottom: 12px;
+    }
+
+    .book-title {
+        font-size: 16px;
+    }
+
+    .info-value {
+        font-size: 11px;
+    }
+
+    .book-actions select {
+        min-height: 39px;
+        padding: 8px 7px;
+        font-size: 10px;
+    }
+
+    .action-btn {
+        min-height: 39px;
+        padding: 8px 5px;
+        font-size: 10px;
+    }
+
+    .empty {
+        padding: 44px 17px;
+    }
+
+    .empty h2 {
+        font-size: 27px;
+    }
+}
+
+@media (max-width: 380px) {
+    .book-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .cover-area {
+        height: 250px;
+    }
+
+    .book-card {
+        padding: 15px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+    }
+}
+</style>
+</head>
+
+<body>
+
+{% include 'reading/navbar.html' %}
+
+    <section class="container intro">
+        <span class="eyebrow">Your personal library</span>
+
+        <h1>My Reading <span>List</span></h1>
+
+        <p>
+            Welcome, {{ request.user.username }}. Keep all your books in one place
+            and follow your reading journey from the first page to the last.
+        </p>
+
+        <span class="book-count">
+            {{ books|length }} saved book{{ books|length|pluralize }}
+        </span>
+    </section>
+
+    <main class="container">
+
+        {% if messages %}
+            <div class="messages" role="status">
+                {% for message in messages %}
+                    <div class="message{% if message.tags == 'error' %} error{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% if books %}
+
+            <section class="section-heading">
+                <h2>Your <span>Collection</span></h2>
+                <p>Manage your books and continue reading anytime.</p>
+            </section>
+
+            <section class="book-grid">
+                {% for book in books %}
+
+                    <article class="book-card">
+
+                        <div class="cover-area">
+                            {% if book.cover_url %}
+                                <img
+                                    src="{{ book.cover_url }}"
+                                    alt="{{ book.title }} cover"
+                                    class="cover"
+                                    loading="lazy"
+                                >
+                            {% else %}
+                                <div class="no-cover">
+                                    <span>▤</span>
+                                    <div>No cover available</div>
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <h2 class="book-title">{{ book.title }}</h2>
+
+                        <div class="book-info">
+
+                            <div class="info-row">
+                                <span class="info-label">Author</span>
+                                <span class="info-value">
+                                    {{ book.author|default:"Unknown author" }}
+                                </span>
+                            </div>
+
+                            <div class="info-row">
+                                <span class="info-label">Published</span>
+                                <span class="info-value">
+                                    {{ book.publish_year|default:"Unknown" }}
+                                </span>
+                            </div>
+
+                            <div class="info-row">
+                                <span class="info-label">Reading status</span>
+                                <span class="info-value status">
+                                    {{ book.get_status_display }}
+                                </span>
+                            </div>
+
+                        </div>
+
+                        {% if book.is_favorite %}
+                            <p class="favorite">★ Your Favorite</p>
+                        {% endif %}
+
+                        <div class="book-actions">
+
+                            <a
+                                href="{% url 'read_book' %}?title={{ book.title|urlencode }}&author={{ book.author|urlencode }}&open_library_id={{ book.open_library_id|urlencode }}"
+                                class="action-btn read-book"
+                            >
+                                📖 Continue Reading
+                            </a>
+
+                            <form method="POST" action="{% url 'update_status' book.id %}">
+                                {% csrf_token %}
+
+                                <label for="status-{{ book.id }}">
+                                    Update reading status
+                                </label>
+
+                                <select name="status" id="status-{{ book.id }}" required>
+                                    <option value="want_to_read"
+                                        {% if book.status == 'want_to_read' %}selected{% endif %}>
+                                        Want to read
+                                    </option>
+
+                                    <option value="currently_reading"
+                                        {% if book.status == 'currently_reading' %}selected{% endif %}>
+                                        Currently reading
+                                    </option>
+
+                                    <option value="completed"
+                                        {% if book.status == 'completed' %}selected{% endif %}>
+                                        Completed
+                                    </option>
+                                </select>
+
+                                <button type="submit" class="action-btn update">
+                                    Update Status
+                                </button>
+                            </form>
+
+                            <form method="POST" action="{% url 'toggle_favorite' book.id %}">
+                                {% csrf_token %}
+
+                                <button type="submit" class="action-btn">
+                                    {% if book.is_favorite %}
+                                        ♥ Remove Favorite
+                                    {% else %}
+                                        ♡ Add to Favorites
+                                    {% endif %}
+                                </button>
+                            </form>
+
+                            <form
+                                method="POST"
+                                action="{% url 'remove_book' book.id %}"
+                                onsubmit="return confirm('Are you sure you want to remove this book from your reading list?');"
+                            >
+                                {% csrf_token %}
+
+                                <button type="submit" class="action-btn remove">
+                                    Remove Book
+                                </button>
+                            </form>
+
+                        </div>
+
+                    </article>
+
+                {% endfor %}
+            </section>
+
+        {% else %}
+
+            <section class="empty">
+                <div class="empty-icon">♧</div>
+
+                <h2>Your Reading List Is Empty</h2>
+
+                <p>
+                    Your next favorite book is waiting. Explore the library,
+                    discover a new story, and start building your personal collection.
+                </p>
+
+                <a href="{% url 'search_page' %}" class="discover-btn">
+                    Discover Books
+                </a>
+            </section>
+
+        {% endif %}
+
+    </main>
+
+    {% include 'reading/footer.html' %}
+
+</body>
+</html>

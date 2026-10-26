@@ -1,0 +1,160 @@
+
+{% load static %}
+
+<style>
+.booktrack-navbar,
+.booktrack-navbar * {
+    box-sizing: border-box;
+}
+
+.booktrack-navbar {
+    width: calc(100% - 40px);
+    max-width: 1450px;
+    min-height: 82px;
+    margin: 14px auto 30px;
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    position: sticky;
+    top: 12px;
+    z-index: 1000;
+
+    border: 1px solid rgba(132, 34, 54, 0.10);
+    border-radius: 18px;
+    background: rgba(248, 245, 235, 0.82);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    box-shadow: 0 6px 20px rgba(41, 37, 31, 0.04);
+
+    font-family: "Plus Jakarta Sans", Arial, sans-serif;
+}
+
+.booktrack-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+    text-decoration: none;
+}
+
+.booktrack-brand-mark {
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: #842236;
+    color: #fffaf0;
+    font-family: "DM Serif Display", Georgia, serif;
+    font-size: 29px;
+}
+
+.booktrack-brand-name {
+    color: #29251f;
+    font-family: "DM Serif Display", Georgia, serif;
+    font-size: 27px;
+    line-height: 1.1;
+}
+
+.booktrack-brand-name span {
+    color: #29251f;
+}
+
+.booktrack-tagline {
+    display: block;
+    margin-top: 5px;
+    color: #777168;
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+}
+
+.booktrack-nav-links {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.booktrack-nav-links a {
+    padding: 10px 12px;
+    border: 1px solid transparent;
+    border-radius: 9px;
+    background: #842236;
+    color: #fffaf5;
+    font-size: 11px;
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: 0.2s ease;
+}
+
+.booktrack-nav-links a:hover {
+    border-color: #6f192b;
+    background: #6f192b;
+    color: #ffffff;
+}
+
+.booktrack-nav-links .booktrack-logout {
+    border-color: #842236;
+    background: #842236;
+    color: #fffaf5;
+}
+
+.booktrack-nav-links .booktrack-logout:hover {
+    background: #6f192b;
+    color: #ffffff;
+}
+
+@media (max-width: 1050px) {
+    .booktrack-navbar {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .booktrack-nav-links {
+        justify-content: flex-start;
+        width: 100%;
+    }
+}
+
+@media (max-width: 600px) {
+    .booktrack-navbar {
+        width: calc(100% - 20px);
+        margin-top: 10px;
+        padding: 14px;
+        gap: 14px;
+    }
+
+    .booktrack-brand-name {
+        font-size: 24px;
+    }
+
+    .booktrack-nav-links {
+        gap: 4px;
+    }
+
+    .booktrack-nav-links a {
+        padding: 8px 9px;
+        font-size: 10px;
+    }
+}
+</style>
+
+<nav class="booktrack-navbar" aria-label="Main navigation">
+    <a href="{% url 'index' %}" class="booktrack-brand">
+        <span class="booktrack-brand-mark">b.</span>
+        <span>
+            <span class="booktrack-brand-name">BookTrack<span>.</span></span>
+            <span class="booktrack-tagline">READ · DISCOVER · REPEAT</span>
+        </span>
+    </a>
+
+    <div class="booktrack-nav-links">
+        <a href="{% url 'reader_dashboard' %}"> ← Dashboard</a>
+    </div>
+</nav>
